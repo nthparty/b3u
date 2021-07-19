@@ -46,6 +46,20 @@ The library provides methods for extracting configuration data (credentials and 
     # manner specified in the Boto3 documentation).
     boto3.client('ssm', **b3u.conf("ssm:///path/to/parameter?region_name=us-east-1"))
 
+Testing and Conventions
+-----------------------
+All unit tests are executed when using `nose <https://nose.readthedocs.io/>`_ (see ``setup.cfg`` for configution details)::
+
+    nosetests
+
+Alternatively, all unit tests are included in the module itself and can be executed using `doctest <https://docs.python.org/3/library/doctest.html>`_::
+
+    python b3u/b3u.py -v
+
+Style conventions are enforced using `Pylint <https://www.pylint.org/>`_::
+
+    pylint b3u
+
 Contributions
 -------------
 In order to contribute to the source code, open an issue or submit a pull request on the GitHub page for this library.

@@ -11,6 +11,15 @@ from urllib.parse import urlparse, parse_qs
 def credentials(uri: str) -> dict:
     """
     Extract configuration data (only credentials from a URI.
+
+    >>> credentials('s3://abc:xyz@bucket/object.data')
+    {'aws_access_key_id': 'abc', 'aws_secret_access_key': 'xyz'}
+    >>> cs = credentials('s3://abc:xyz:123@bucket/object.data')
+    >>> for (k, v) in sorted(cs.items()):
+    ...     print(k, v)
+    aws_access_key_id abc
+    aws_secret_access_key xyz
+    aws_session_token 123
     """
     params = {}
     result = urlparse(uri)
@@ -32,6 +41,25 @@ def configuration(uri: str) -> dict:
     """
     Extract configuration data (both credentials and
     non-credentials) from a URI.
+
+    >>> configuration('s3://abc:xyz@bucket/object.data')
+    {'aws_access_key_id': 'abc', 'aws_secret_access_key': 'xyz'}
+    >>> cs = configuration('s3://abc:xyz:123@bucket/object.data')
+    >>> for (k, v) in sorted(cs.items()):
+    ...     print(k, v)
+    aws_access_key_id abc
+    aws_secret_access_key xyz
+    aws_session_token 123
+    >>> cs = configuration('s3://abc:xyz@bucket/object.data?region_name=us-east-1')
+    >>> for (k, v) in sorted(cs.items()):
+    ...     print(k, v)
+    aws_access_key_id abc
+    aws_secret_access_key xyz
+    region_name us-east-1
+    >>> cs = configuration('s3://bucket/object.data?region_name=us-east-1')
+    >>> for (k, v) in sorted(cs.items()):
+    ...     print(k, v)
+    region_name us-east-1
     """
     params = credentials(uri)
     result = parse_qs(urlparse(uri).query)
