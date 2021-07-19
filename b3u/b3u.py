@@ -75,4 +75,4 @@ conf = configuration
 cred = credentials
 
 if __name__ == "__main__":
-    doctest.testmod()
+    doctest.testmod() # pragma: no cover
