@@ -70,9 +70,49 @@ def configuration(uri: str) -> dict:
 
     return params
 
+def for_client(uri: str) -> dict:
+    """
+    Extract all parameters for a client constructor.
+
+    >>> ps = for_client('s3://abc:xyz@bucket/object.data?region_name=us-east-1')
+    >>> for (k, v) in sorted(ps.items()):
+    ...     print(k, v)
+    aws_access_key_id abc
+    aws_secret_access_key xyz
+    region_name us-east-1
+    service_name s3
+    """
+    result = urlparse(uri)
+    params = configuration(uri)
+    params['service_name'] = result.scheme
+    return params
+
+def for_get(uri: str) -> dict:
+    """
+    Extract resource names from a URI for supported AWS services.
+
+    >>> for_get('s3://abc:xyz@bucket/object.data')
+    {'Bucket': 'bucket', 'Key': 'object.data'}
+    >>> for_get('ssm://ABC:XYZ@/path/to/parameter?region_name=us-east-1')
+    {'Name': '/path/to/parameter'}
+    """
+    params = {}
+    result = urlparse(uri)
+
+    if result.scheme == 's3':
+        if result.hostname is not None and result.hostname != '':
+            params['Bucket'] = result.hostname
+        if result.path is not None and result.path != '':
+            params['Key'] = result.path.lstrip('/')
+    elif result.scheme == 'ssm':
+        if result.path is not None and result.path != '':
+            params['Name'] = result.path
+
+    return params
+
 # Succinct synonyms.
-conf = configuration
 cred = credentials
+conf = configuration
 
 if __name__ == "__main__":
     doctest.testmod() # pragma: no cover

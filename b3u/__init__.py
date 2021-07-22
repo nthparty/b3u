@@ -1,4 +1,5 @@
 """Give users direct access to methods."""
 from b3u.b3u import\
+    cred, credentials,\
     conf, configuration,\
-    cred, credentials
+    for_client, for_get

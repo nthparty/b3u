@@ -2,7 +2,7 @@
 b3u
 ===
 
-Boto3 URI utility library that supports extraction of Boto3 configuration data from AWS resource URIs.
+Boto3 URI utility library that supports extraction of Boto3 configuration data and method parameters from AWS resource URIs.
 
 |pypi| |travis| |coveralls|
 
@@ -18,7 +18,7 @@ Boto3 URI utility library that supports extraction of Boto3 configuration data f
 
 Purpose
 -------
-When applications that employ `Boto3 <https://boto3.readthedocs.io>`_ must work with AWS resources that are spread across multiple accounts, it can be useful to tie AWS configuration information (both `credentials <https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html>`_ and `non-credentials <https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html>`_) directly to associated AWS resources (*e.g.*, by including the configuration data within URIs). This library provides methods that extract AWS configuration data from URIs, offering a succinct syntax for passing (directly into boto3 methods) configuration data that is included within URIs.
+When applications that employ `Boto3 <https://boto3.readthedocs.io>`_ must work with AWS resources that are spread across multiple accounts, it can be useful to tie AWS configuration information (both `credentials <https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html>`_ and `non-credentials <https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html>`_) directly to associated AWS resources (*e.g.*, by including the configuration data within URIs). This library provides methods that extract AWS configuration data and method parameters from URIs, offering a succinct syntax for passing (directly into boto3 methods) configuration data and/or resource names that are included within URIs.
 
 Package Installation and Usage
 ------------------------------
@@ -33,14 +33,17 @@ The library can be imported in the usual ways::
 
 The library provides methods for extracting configuration data (credentials and non-credentials) from URIs, as in the examples below::
 
-    # Create an S3 client given a URI (for an object in an S3 bucket) that
-    # includes credentials (an access key `ABC` and a secret key `XYZ`).
-    boto3.client('s3', **b3u.cred("s3://ABC:XYZ@example-bucket/object.data"))
-
     # Create an S3 client given a URI (for an S3 bucket) that includes
     # credentials (an access key `ABC`, a secret key `XYZ`, and a session
     # token `UVW`).
     boto3.client('s3', **b3u.cred("s3://ABC:XYZ:UVW@example-bucket"))
+
+    # Create an S3 client given a URI (for an object in an S3 bucket) that
+    # includes credentials (an access key `ABC` and a secret key `XYZ`).
+    # Then, use the same URI to retrieve a handle for the object itself.
+    uri = "s3://ABC:XYZ@example-bucket/object.data"
+    c = boto3.client(**b3u.for_client(uri))
+    o = c.get_object(**b3u.for_get(uri))
 
     # Create an SSM client given a URI (naming a particular a parameter in
     # the Parameter Store) that specifies the AWS Region `us-east-1`.
