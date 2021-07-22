@@ -4,11 +4,14 @@ b3u
 
 Boto3 URI utility library that supports extraction of Boto3 configuration data from AWS resource URIs.
 
-|pypi|
+|pypi| |travis|
 
 .. |pypi| image:: https://badge.fury.io/py/b3u.svg
    :target: https://badge.fury.io/py/b3u
    :alt: PyPI version and link.
+
+.. |travis| image:: https://travis-ci.com/nthparty/b3u.svg?branch=main
+   :target: https://travis-ci.com/nthparty/b3u
 
 Purpose
 -------
