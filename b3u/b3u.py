@@ -37,7 +37,7 @@ def credentials(uri: str) -> dict:
 
     return params
 
-def configuration(uri: str) -> dict:
+def configuration(uri: str, safe: bool = True) -> dict:
     """
     Extract configuration data (both credentials and
     non-credentials) from a URI.
@@ -60,17 +60,28 @@ def configuration(uri: str) -> dict:
     >>> for (k, v) in sorted(cs.items()):
     ...     print(k, v)
     region_name us-east-1
+    >>> cs = configuration('s3://bucket/object.data?other_param=other_value')
+    >>> for (k, v) in sorted(cs.items()):
+    ...     print(k, v)
+    >>> cs = configuration('s3://bucket/object.data?other_param=other_value', False)
+    >>> for (k, v) in sorted(cs.items()):
+    ...     print(k, v)
+    other_param other_value
     """
     params = credentials(uri)
     result = parse_qs(urlparse(uri).query)
 
     for (key, values) in result.items():
         if len(values) == 1:
-            params[key] = values[0]
+            if not safe or key in [
+                'aws_access_key_id', 'aws_secret_access_key',
+                'aws_session_token', 'region_name'
+            ]:
+                params[key] = values[0]
 
     return params
 
-def for_client(uri: str) -> dict:
+def for_client(uri: str, safe: bool = True) -> dict:
     """
     Extract all parameters for a client constructor.
 
@@ -81,11 +92,52 @@ def for_client(uri: str) -> dict:
     aws_secret_access_key xyz
     region_name us-east-1
     service_name s3
+    >>> ps = for_client('s3://abc:xyz@bucket/object.data?other_param=other_value')
+    >>> for (k, v) in sorted(ps.items()):
+    ...     print(k, v)
+    aws_access_key_id abc
+    aws_secret_access_key xyz
+    service_name s3
+    >>> ps = for_client('s3://abc:xyz@bucket/object.data?other_param=other_value', False)
+    >>> for (k, v) in sorted(ps.items()):
+    ...     print(k, v)
+    aws_access_key_id abc
+    aws_secret_access_key xyz
+    other_param other_value
+    service_name s3
     """
     result = urlparse(uri)
-    params = configuration(uri)
+    params = configuration(uri, False)
     params['service_name'] = result.scheme
+
+    # Keep only those parameters that correspond to named arguments
+    # of the target method.
+    if safe:
+        params = {
+            param: value
+            for (param, value) in params.items()
+            if param in [
+                'service_name', 'region_name', 'api_version', 'endpoint_url',
+                'verify', 'aws_access_key_id', 'aws_secret_access_key',
+                'aws_session_token', 'config'
+            ]
+        }
+
     return params
+
+def for_resource(uri: str, safe: bool = True) -> dict:
+    """
+    Extract all parameters for a resource constructor.
+
+    >>> ps = for_resource('s3://abc:xyz@bucket/object.data?region_name=us-east-1')
+    >>> for (k, v) in sorted(ps.items()):
+    ...     print(k, v)
+    aws_access_key_id abc
+    aws_secret_access_key xyz
+    region_name us-east-1
+    service_name s3
+    """
+    return for_client(uri, safe)
 
 def for_get(uri: str) -> dict:
     """
