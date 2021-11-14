@@ -4,8 +4,8 @@ notifications:
     on_failure: always
 language: python
 python:
-  - "3.7"
   - "3.8"
+  - "3.9"
 cache: pip
 install:
   - pip install pylint
