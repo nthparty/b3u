@@ -5,7 +5,7 @@ with open("README.rst", "r") as fh:
 
 setup(
     name="b3u",
-    version="1.0.1",
+    version="1.0.2",
     packages=["b3u",],
     install_requires=[],
     license="MIT",
