@@ -6,7 +6,7 @@ Boto3 configuration data from AWS resource URIs.
 
 from __future__ import annotations
 import doctest
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, quote, unquote, ParseResult
 
 def credentials(uri: str) -> dict:
     """
@@ -20,19 +20,32 @@ def credentials(uri: str) -> dict:
     aws_access_key_id abc
     aws_secret_access_key xyz
     aws_session_token 123
+
+    >>> cs = credentials('s3://abc:/abcdef/ghijklmnopqrstuvwxyz/1234567890/:123@bucket/object.data')
+    >>> for (k, v) in sorted(cs.items()):
+    ...     print(k, v)
+    aws_access_key_id abc
+    aws_secret_access_key /abcdef/ghijklmnopqrstuvwxyz/1234567890/
+    aws_session_token 123
+
+    >>> cs = credentials('s3://abc:/abcdef/ghijklmnopqrstuvwxyz/1234567890/@bucket/object.data')
+    >>> for (k, v) in sorted(cs.items()):
+    ...     print(k, v)
+    aws_access_key_id abc
+    aws_secret_access_key /abcdef/ghijklmnopqrstuvwxyz/1234567890/
     """
     params = {}
-    result = urlparse(uri)
+    result = _make_url_safe(uri)
 
     if result.username is not None and result.username != '':
         params['aws_access_key_id'] = result.username
 
     if result.password is not None and result.password != '':
         if not ':' in result.password:
-            params['aws_secret_access_key'] = result.password
+            params['aws_secret_access_key'] = unquote(result.password)
         else:
             (secret, token) = result.password.split(':')
-            params['aws_secret_access_key'] = secret
+            params['aws_secret_access_key'] = unquote(secret)
             params['aws_session_token'] = token
 
     return params
@@ -67,9 +80,13 @@ def configuration(uri: str, safe: bool = True) -> dict:
     >>> for (k, v) in sorted(cs.items()):
     ...     print(k, v)
     other_param other_value
+    >>> cs = configuration('s3://bucket/object.data?other_param=other:value', False)
+    >>> for (k, v) in sorted(cs.items()):
+    ...     print(k, v)
+    other_param other:value
     """
     params = credentials(uri)
-    result = parse_qs(urlparse(uri).query)
+    result = parse_qs(_make_url_safe(uri).query)
 
     for (key, values) in result.items():
         if len(values) == 1:
@@ -106,7 +123,7 @@ def for_client(uri: str, safe: bool = True) -> dict:
     other_param other_value
     service_name s3
     """
-    result = urlparse(uri)
+    result = _make_url_safe(uri)
     params = configuration(uri, False)
     params['service_name'] = result.scheme
 
@@ -149,7 +166,7 @@ def for_get(uri: str) -> dict:
     {'Name': '/path/to/parameter'}
     """
     params = {}
-    result = urlparse(uri)
+    result = _make_url_safe(uri)
 
     if result.scheme == 's3':
         if result.hostname is not None and result.hostname != '':
@@ -161,6 +178,26 @@ def for_get(uri: str) -> dict:
             params['Name'] = result.path
 
     return params
+
+def _make_url_safe(uri: str) -> ParseResult:
+    """
+    URL encode slashes in aws_secret_access_key to make it compatible with
+    urlparse()
+    :param uri: AWS resource URI
+    :return: Url parsed URI with encoded slashes for aws_secret_access_key
+    """
+    parts = uri.split(':')
+    if len(parts) >= 3:
+        key_and_bucket = parts[2].split('@')
+        if len(key_and_bucket[0]) == 40:
+            key_and_bucket[0] = quote(key_and_bucket[0], safe='')
+
+        if len(parts) >= 4:
+            uri = ':'.join(parts[:2]) + ':' + ''.join(key_and_bucket) + ':' + ':'.join(parts[3:])
+        else:
+            uri = ':'.join(parts[:2]) + ':' + '@'.join(key_and_bucket)
+    return urlparse(uri)
+
 
 # Succinct synonyms.
 cred = credentials
