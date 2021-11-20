@@ -10,19 +10,21 @@ Boto3 URI utility library that supports extraction of Boto3 configuration data a
    :target: https://badge.fury.io/py/b3u
    :alt: PyPI version and link.
 
-.. |travis| image:: https://travis-ci.com/nthparty/b3u.svg?branch=main
-   :target: https://travis-ci.com/nthparty/b3u
+.. |travis| image:: https://app.travis-ci.com/nthparty/b3u.svg?branch=main
+   :target: https://app.travis-ci.com/nthparty/b3u
+   :alt: Travis CI build status.
 
 .. |coveralls| image:: https://coveralls.io/repos/github/nthparty/blooms/badge.svg?branch=main
    :target: https://coveralls.io/github/nthparty/b3u?branch=main
+   :alt: Coveralls test coverage summary.
 
 Purpose
 -------
-When applications that employ `Boto3 <https://boto3.readthedocs.io>`_ must work with AWS resources that are spread across multiple accounts, it can be useful to tie AWS configuration information (both `credentials <https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html>`_ and `non-credentials <https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html>`_) directly to associated AWS resources (*e.g.*, by including the configuration data within URIs). This library provides methods that extract AWS configuration data and method parameters from URIs, offering a succinct syntax for passing (directly into boto3 methods) configuration data and/or resource names that are included within URIs.
+When applications that employ `Boto3 <https://boto3.readthedocs.io>`_ must work with AWS resources that are spread across multiple accounts, it can be useful to tie AWS configuration information (both `credentials <https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html>`_ and `non-credentials <https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html>`_) directly to associated AWS resources (*e.g.*, by including the configuration data within URIs). This library provides methods that extract AWS configuration data and method parameters from URIs, offering a succinct syntax for passing (directly into Boto3 methods) configuration data and/or resource names that are included within URIs.
 
 Package Installation and Usage
 ------------------------------
-The package is available on PyPI::
+The package is available on `PyPI <https://pypi.org/project/b3u/>`_::
 
     python -m pip install b3u
 
@@ -67,6 +69,7 @@ Testing and Conventions
 -----------------------
 All unit tests are executed and their coverage is measured when using `nose <https://nose.readthedocs.io/>`_ (see ``setup.cfg`` for configution details)::
 
+    python -m pip install nose coverage
     nosetests
 
 Alternatively, all unit tests are included in the module itself and can be executed using `doctest <https://docs.python.org/3/library/doctest.html>`_::
@@ -75,11 +78,12 @@ Alternatively, all unit tests are included in the module itself and can be execu
 
 Style conventions are enforced using `Pylint <https://www.pylint.org/>`_::
 
+    python -m pip install pylint
     pylint b3u
 
 Contributions
 -------------
-In order to contribute to the source code, open an issue or submit a pull request on the GitHub page for this library.
+In order to contribute to the source code, open an issue or submit a pull request on the `GitHub page <https://github.com/nthparty/b3u>`_ for this library.
 
 Versioning
 ----------
