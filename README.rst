@@ -31,29 +31,27 @@ The library can be imported in the usual ways::
     import b3u
     from b3u import *
 
-The library provides methods for extracting configuration data (credentials and non-credentials) from URIs, as in the examples below::
+Examples
+^^^^^^^^
+The library provides methods for extracting configuration data (credentials and non-credentials) from URIs. The example below illustrates the creation of an S3 client object from a given a URI (for an S3 bucket), where the URI includes credentials (an access key ``ABC``, a secret key ``XYZ``, and a session token ``UVW``)::
 
-    # Create an S3 client given a URI (for an S3 bucket) that includes
-    # credentials (an access key `ABC`, a secret key `XYZ`, and a session
-    # token `UVW`).
-    boto3.client('s3', **b3u.cred("s3://ABC:XYZ:UVW@example-bucket"))
+    >>> import boto3
+    >>> import b3u
+    >>> boto3.client('s3', **b3u.cred("s3://ABC:XYZ:UVW@example-bucket"))
 
-    # Create an S3 client given a URI (for an object in an S3 bucket) that
-    # includes credentials (an access key `ABC` and a secret key `XYZ`).
-    # Then, use the same URI to retrieve a handle for the object itself.
-    uri = "s3://ABC:XYZ@example-bucket/object.data"
-    c = boto3.client(**b3u.for_client(uri))
-    o = c.get_object(**b3u.for_get(uri))
+The example below creates an S3 client given a URI (for an object in an S3 bucket) where the URI includes credentials (an access key ``ABC`` and a secret key ``XYZ``). The same URI is then used to retrieve a handle for the object itself::
 
-    # Create an SSM client given a URI (naming a particular a parameter in
-    # the Parameter Store) that specifies the AWS Region `us-east-1`.
-    boto3.client('ssm', **b3u.conf("ssm://ABC:XYZ@/path/to/parameter?region_name=us-east-1"))
+    >>> uri = "s3://ABC:XYZ@example-bucket/object.data"
+    >>> c = boto3.client(**b3u.for_client(uri))
+    >>> o = c.get_object(**b3u.for_get(uri))
 
-    # Create an SSM client given a URI that contains no credentials but
-    # does specify an AWS Region. Since no credentials are present in the
-    # URI, the boto3 library will look for them in other locations in the
-    # manner specified in the Boto3 documentation).
-    boto3.client('ssm', **b3u.conf("ssm:///path/to/parameter?region_name=us-east-1"))
+The example below creates an SSM client given a URI (naming a particular a parameter in the Parameter Store) that specifies the AWS Region ``us-east-1``::
+
+    >>> boto3.client('ssm', **b3u.conf("ssm://ABC:XYZ@/path/to/parameter?region_name=us-east-1"))
+
+The example below creates an SSM client given a URI that contains no credentials but does specify an AWS Region. Since no credentials are present in the URI, the `Boto3 Python library <https://boto3.readthedocs.io>`_ will look for them in other locations in the manner specified in the Boto3 documentation)::
+
+    >>> boto3.client('ssm', **b3u.conf("ssm:///path/to/parameter?region_name=us-east-1"))
 
 Documentation
 -------------
