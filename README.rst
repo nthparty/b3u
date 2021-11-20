@@ -10,6 +10,10 @@ Boto3 URI utility library that supports extraction of Boto3 configuration data a
    :target: https://badge.fury.io/py/b3u
    :alt: PyPI version and link.
 
+.. |readthedocs| image:: https://readthedocs.org/projects/b3u/badge/?version=latest
+   :target: https://b3u.readthedocs.io/en/latest/?badge=latest
+   :alt: Read the Docs documentation status.
+
 .. |travis| image:: https://app.travis-ci.com/nthparty/b3u.svg?branch=main
    :target: https://app.travis-ci.com/nthparty/b3u
    :alt: Travis CI build status.
