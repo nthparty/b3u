@@ -4,7 +4,7 @@ b3u
 
 Boto3 URI utility library that supports extraction of Boto3 configuration data and method parameters from AWS resource URIs.
 
-|pypi| |travis| |coveralls|
+|pypi| |readthedocs| |travis| |coveralls|
 
 .. |pypi| image:: https://badge.fury.io/py/b3u.svg
    :target: https://badge.fury.io/py/b3u
@@ -74,7 +74,7 @@ Testing and Conventions
 All unit tests are executed and their coverage is measured when using `nose <https://nose.readthedocs.io/>`_ (see ``setup.cfg`` for configution details)::
 
     python -m pip install nose coverage
-    nosetests
+    nosetests --cover-erase
 
 Alternatively, all unit tests are included in the module itself and can be executed using `doctest <https://docs.python.org/3/library/doctest.html>`_::
 
