@@ -4,7 +4,7 @@ b3u
 
 Boto3 URI utility library that supports extraction of Boto3 configuration data and method parameters from AWS resource URIs.
 
-|pypi| |readthedocs| |travis| |coveralls|
+|pypi| |readthedocs| |actions| |coveralls|
 
 .. |pypi| image:: https://badge.fury.io/py/b3u.svg
    :target: https://badge.fury.io/py/b3u
@@ -14,9 +14,9 @@ Boto3 URI utility library that supports extraction of Boto3 configuration data a
    :target: https://b3u.readthedocs.io/en/latest/?badge=latest
    :alt: Read the Docs documentation status.
 
-.. |travis| image:: https://app.travis-ci.com/nthparty/b3u.svg?branch=main
-   :target: https://app.travis-ci.com/nthparty/b3u
-   :alt: Travis CI build status.
+.. |actions| image:: https://github.com/nthparty/b3u/workflows/lint-test-cover-docs/badge.svg
+   :target: https://github.com/nthparty/b3u/actions/workflows/lint-test-cover-docs.yml
+   :alt: GitHub Actions status.
 
 .. |coveralls| image:: https://coveralls.io/repos/github/nthparty/blooms/badge.svg?branch=main
    :target: https://coveralls.io/github/nthparty/b3u?branch=main
