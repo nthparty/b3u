@@ -71,7 +71,7 @@ The documentation can be generated automatically from the source files using `Sp
 
 Testing and Conventions
 -----------------------
-All unit tests are executed and their coverage is measured when using `nose <https://nose.readthedocs.io/>`_ (see ``setup.cfg`` for configution details)::
+All unit tests are executed and their coverage is measured when using `nose <https://nose.readthedocs.io/>`_ (see ``setup.cfg`` for configuration details)::
 
     python -m pip install nose coverage
     nosetests --cover-erase
