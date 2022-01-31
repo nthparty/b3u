@@ -1,6 +1,4 @@
-from pickle import FALSE
-from re import A
-from b3u.b3u_class import b3u
+from b3u.b3u import b3u
 
 
 def func():
