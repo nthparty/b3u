@@ -18,7 +18,7 @@ Boto3 URI utility library that supports extraction of Boto3 configuration data a
    :target: https://github.com/nthparty/b3u/actions/workflows/lint-test-cover-docs.yml
    :alt: GitHub Actions status.
 
-.. |coveralls| image:: https://coveralls.io/repos/github/nthparty/blooms/badge.svg?branch=main
+.. |coveralls| image:: https://coveralls.io/repos/github/nthparty/b3u/badge.svg?branch=main
    :target: https://coveralls.io/github/nthparty/b3u?branch=main
    :alt: Coveralls test coverage summary.
 
