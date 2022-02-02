@@ -30,7 +30,7 @@ jobs:
 
       - name: Lint and test module.
         run: |
-          pipenv install --deploy --dev
+          pipenv install --dev
           pipenv run flake8 # Check against linting rules.
           pipenv run pytest --cov=b3u # Test using pytest.
 
