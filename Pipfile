@@ -9,3 +9,4 @@ name = "pypi"
 flake8 = "*"
 pytest = "*"
 pytest-cov = "*"
+b3u = {editable = true, path = "."}

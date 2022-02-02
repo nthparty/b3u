@@ -1,8 +1,4 @@
-from b3u.b3u import b3u
-
-
-def func():
-    print("hello")
+from b3u import b3u
 
 
 def test_credentials():
