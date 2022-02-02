@@ -2,29 +2,28 @@
 Boto3 URI utility library that supports extraction of
 Boto3 configuration data from AWS resource URIs.
 """
-
 from __future__ import annotations
-import doctest
-from tkinter.messagebox import NO
 from urllib.parse import urlparse, parse_qs, quote, unquote, ParseResult
 
+
 class b3u:
+
     def __init__(self, uri: str):
 
         result = self._make_url_safe(uri)
 
-        self.Bucket = None
-        self.Key = None
-        self.Name = None
+        self.bucket = None
+        self.key = None
+        self.name = None
 
         if result.scheme == 's3':
             if result.hostname is not None and result.hostname != '':
-                self.Bucket = result.hostname
+                self.bucket = result.hostname
             if result.path is not None and result.path != '':
-                self.Key =  result.path.lstrip('/')
+                self.key = result.path.lstrip('/')
         elif result.scheme == 'ssm':
             if result.path is not None and result.path != '':
-                self.Name = result.path
+                self.name = result.path
 
         params = {}
         result = self._make_url_safe(uri)
@@ -35,7 +34,7 @@ class b3u:
             self.aws_access_key_id = None
 
         if result.password is not None and result.password != '':
-            if not ':' in result.password:
+            if ':' not in result.password:
                 self.aws_secret_access_key = unquote(result.password)
                 self.aws_session_token = None
             else:
@@ -70,7 +69,6 @@ class b3u:
         # so that they can be accessed by foo.<custom_parameter_name>
         self._extract_custom_properties(self.custom_values)
 
-
     # Extract all custom values into properties
     def _extract_custom_properties(self, params: dict):
         for key in params.keys():
@@ -78,14 +76,14 @@ class b3u:
 
     # Given a list of property names, creates a dictionary with structure property_name: value if value is not None
     # If safe is false, includes all custom values as well
-    def _package_properties(self, property_list: list, safe: bool=True):
+    def _package_properties(self, property_list: list, safe: bool = True):
         result = {}
 
         for key_val in property_list:
             att_val = self.__getattribute__(key_val)
             if att_val is not None:
                 result[key_val] = att_val
-        
+
         if not safe:
             result.update(self.custom_values)
 
@@ -97,23 +95,26 @@ class b3u:
         """
 
         return self._package_properties(['aws_access_key_id', 'aws_secret_access_key', 'aws_session_token'])
-    
-    def configuration(self, safe: bool=True):
+
+    def configuration(self, safe: bool = True):
         """
         Extract configuration data (both credentials and non-credentials)
-        from a URI string. 
+        from a URI string.
         """
 
-        return self._package_properties(['aws_access_key_id', 'aws_secret_access_key', 'aws_session_token', 'region_name'], safe)
-    
-    def for_client(self, safe: bool=True):
+        return self._package_properties(
+            ['aws_access_key_id', 'aws_secret_access_key', 'aws_session_token', 'region_name'], safe)
+
+    def for_client(self, safe: bool = True):
         """
         Extract parameters for a client constructor from a URI string.
         """
 
-        return self._package_properties(['service_name', 'region_name', 'api_version', 'endpoint_url', 'verify', 'aws_access_key_id', 'aws_secret_access_key', 'aws_session_token', 'config'], safe)
+        return self._package_properties(
+            ['service_name', 'region_name', 'api_version', 'endpoint_url', 'verify', 'aws_access_key_id',
+             'aws_secret_access_key', 'aws_session_token', 'config'], safe)
 
-    def for_resource(self, safe: bool=True):
+    def for_resource(self, safe: bool = True):
         """
         Extract parameters for a resource constructor from a URI string.
         This function is a synonym for the :obj:`for_client` function.
@@ -147,12 +148,11 @@ class b3u:
         Currently, only S3 and SSM are supported.
         """
         if self.service_name == 's3':
-            return self._package_properties(['Bucket', 'Key'])
+            return self._package_properties(['bucket', 'key'])
         elif self.service_name == 'ssm':
-            return self._package_properties(['Name'])
+            return self._package_properties(['name'])
 
         return {}
-       
 
     def cred(self) -> dict:
         """
@@ -160,7 +160,7 @@ class b3u:
         """
         return self.credentials()
 
-    def conf(self, safe: bool=True) -> dict:
+    def conf(self, safe: bool = True) -> dict:
         """
         Concise synonym for the :obj:`_configuration` function.
         """
@@ -188,35 +188,34 @@ class b3u:
                 new_uri += ":"
             else:
                 contains_aws_info = True
-            
+
             new_uri += self.aws_secret_access_key
-            
+
         if self.aws_session_token is not None:
             if contains_aws_info:
                 new_uri += ":"
             else:
                 contains_aws_info = True
-            
+
             new_uri += self.aws_session_token
 
         # Only include the @ if there was aws info included
         if contains_aws_info:
             new_uri += "@"
-        
 
-        if self.Bucket is not None:
-            new_uri += self.Bucket
+        if self.bucket is not None:
+            new_uri += self.bucket
 
             # bucket must exist for key to exist
-            if self.Key is not None:
-                new_uri += "/" + self.Key
-        
-        elif self.Name is not None:
-            new_uri += self.Name
+            if self.key is not None:
+                new_uri += "/" + self.key
 
-        
+        elif self.name is not None:
+            new_uri += self.name
+
         # Add in all parameters including custom values
-        parameters = self._package_properties(['region_name', 'api_version', 'endpoint_url', 'verify', 'config'], False)
+        parameters = self._package_properties(
+            ['region_name', 'api_version', 'endpoint_url', 'verify', 'config'], False)
 
         first_param = True
         for key in parameters:
@@ -225,14 +224,7 @@ class b3u:
                 first_param = False
             else:
                 new_uri += "&"
-            
+
             new_uri += key + "=" + parameters[key]
 
         return new_uri
-
-        
-
-
-if __name__ == "__main__":
-    doctest.testmod() # pragma: no cover
-

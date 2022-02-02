@@ -12,8 +12,8 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))
 
+sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
@@ -25,8 +25,7 @@ version = package.split('version = "')[1].split('"')[0]
 release = version
 
 author = 'Nth Party, Ltd.'
-copyright = '2021, Nth Party, Ltd' # Period omitted; precedes punctuation.
-
+copyright = '2022, Nth Party, Ltd'  # Period omitted; precedes punctuation.
 
 # -- General configuration ---------------------------------------------------
 
@@ -60,7 +59,6 @@ autodoc_default_options = {
     ])
 }
 autodoc_preserve_defaults = True
-
 
 # -- Options for HTML output -------------------------------------------------
 
