@@ -15,21 +15,34 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
-      - name: Lint and test module.
+
+      - name: Install pipenv
         run: |
           python -m pip install --upgrade pip
           pip install pipenv
-          pipenv install
-          python -m flake8 # Check against linting rules.
-          python -m pytest --cov=b3u # Test using pytest.
+
+      - name: Cache pipenv
+        id: cache-pipenv
+        uses: actions/cache@v2
+        with:
+          path: ~/.local/share/virtualenvs
+          key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
+
+      - name: Lint and test module.
+        run: |
+          pipenv install --deploy --dev
+          pipenv run flake8 # Check against linting rules.
+          pipenv run pytest --cov=b3u # Test using pytest.
+
       - name: Publish coverage results.
         run: |
           pipenv install coveralls
-          python -m coveralls --service=github # Submit to coveralls.
+          pipenv run coveralls --service=github # Submit to coveralls.
         if: matrix.python-version == '3.8'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Test auto-generation of documentation.
         run: |
-          pip install -U -r docs/requirements.txt
-          cd docs && sphinx-apidoc -f -E --templatedir=_templates -o _source .. ../setup.py && make html && cd ..
+          pipenv install -r docs/requirements.txt
+          cd docs && pipenv run sphinx-apidoc -f -E --templatedir=_templates -o _source .. ../setup.py && make html && cd ..
