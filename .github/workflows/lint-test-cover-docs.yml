@@ -44,5 +44,5 @@ jobs:
 
       - name: Test auto-generation of documentation.
         run: |
-          pipenv install -r docs/requirements.txt
-          cd docs && pipenv run sphinx-apidoc -f -E --templatedir=_templates -o _source .. ../setup.py && make html && cd ..
+          pip install -U -r docs/requirements.txt
+          cd docs && sphinx-apidoc -f -E --templatedir=_templates -o _source .. ../setup.py && make html && cd ..
