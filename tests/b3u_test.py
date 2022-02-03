@@ -1,4 +1,4 @@
-from src.b3u import b3u
+from b3u import b3u
 
 
 def test_credentials():
