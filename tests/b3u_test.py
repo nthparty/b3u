@@ -86,3 +86,19 @@ def test_for_get():
 
     test_object = b3u('ssm://ABC:XYZ@/path/to/parameter?region_name=us-east-1')
     assert test_object.for_get() == {'name': '/path/to/parameter'}
+
+
+def test_to_string():
+    """
+    The to_string method should properly reconstruct a b3u uri if any
+    values have been changed
+    """
+
+    test_object = b3u('s3://abc:xyz@bucket/object.data?region_name=us-east-1&other_param=other_value')
+    assert test_object.to_string() == 's3://abc:xyz@bucket/object.data?region_name=us-east-1&other_param=other_value'
+
+    test_object.region_name = "us-east-2"
+    test_object.aws_access_key_id = "LMN"
+    test_object.bucket = "new_bucket"
+
+    assert test_object.to_string() == 's3://LMN:xyz@new_bucket/object.data?region_name=us-east-2&other_param=other_value'
