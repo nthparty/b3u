@@ -97,14 +97,14 @@ def test_to_string():
     values have been changed
     """
 
-    test_object = b3u('s3://abc:xyz@bucket/object.data?region_name=us-east-1&other_param=other_value')
-    assert test_object.to_string() == 's3://abc:xyz@bucket/object.data?region_name=us-east-1&other_param=other_value'
+    test_obj = b3u('s3://abc:xyz@bucket/object.data?region_name=us-east-1&other_param=other_value')
+    assert test_obj.to_string() == 's3://abc:xyz@bucket/object.data?region_name=us-east-1&other_param=other_value'
 
-    test_object.region_name = "us-east-2"
-    test_object.aws_access_key_id = "LMN"
-    test_object.bucket = "new_bucket"
+    test_obj.region_name = "us-east-2"
+    test_obj.aws_access_key_id = "LMN"
+    test_obj.bucket = "new_bucket"
 
-    assert test_object.to_string() == 's3://LMN:xyz@new_bucket/object.data?region_name=us-east-2&other_param=other_value'
+    assert test_obj.to_string() == 's3://LMN:xyz@new_bucket/object.data?region_name=us-east-2&other_param=other_value'
 
     test_object = b3u('s3://:b@bucket/object.data?region_name=us-east-1&other_param=other_value')
     assert test_object.to_string() == 's3://:b@bucket/object.data?region_name=us-east-1&other_param=other_value'
@@ -122,5 +122,6 @@ def test_to_string():
     assert test_object.to_string() == 's3://bucket/object.data'
 
     test_object = b3u('ssm://ABC:XYZ@/path/to/parameter?region_name=us-east-1')
+    assert test_object.to_string() == 'ssm://ABC:XYZ@/path/to/parameter?region_name=us-east-1'
     test_object.name = '/path/to/parameter2'
     assert test_object.to_string() == 'ssm://ABC:XYZ@/path/to/parameter2?region_name=us-east-1'
