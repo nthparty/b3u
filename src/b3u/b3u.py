@@ -3,6 +3,7 @@ Boto3 URI utility library that supports extraction of
 Boto3 configuration data from AWS resource URIs.
 """
 from __future__ import annotations
+import doctest
 from urllib.parse import urlparse, parse_qs, quote, unquote, ParseResult
 
 
@@ -80,7 +81,7 @@ class b3u:
 
     # Given a list of property names, creates a dictionary with structure property_name: value if value is not None
     # If safe is false, includes all custom values as well
-    def _package_properties(self, property_list: list, safe: bool = True):
+    def _package_properties(self, property_list: list, safe: bool = True) -> dict:
         result = {}
 
         for key_val in property_list:
@@ -103,6 +104,7 @@ class b3u:
         The format ``abc:xyz:123`` can be used to specify a session
         token (which is the third component, ``123``, in this example)
         as part of a URI.
+
         >>> cs = b3u('s3://abc:xyz:123@bucket/object.data').credentials()
         >>> for (k, v) in sorted(cs.items()):
         ...     print(k, v)
@@ -118,29 +120,66 @@ class b3u:
 
         return self._package_properties(['aws_access_key_id', 'aws_secret_access_key', 'aws_session_token'])
 
-    def configuration(self, safe: bool = True):
+    def configuration(self, safe: bool = True) -> dict:
         """
         Extract configuration data (both credentials and non-credentials)
         from a URI string.
+
         :param safe: If true, only return standard AWS properties that can be passed to. If false, returns all
+
+        >>> b3u('s3://abc:xyz@bucket/object.data?other_param=other_value').configuration()
+        {'aws_access_key_id': 'abc', 'aws_secret_access_key': 'xyz'}
+
+        >>> b3u('s3://abc:xyz@bucket/object.data?other_param=other_value').configuration(False)
+        {'aws_access_key_id': 'abc', 'aws_secret_access_key': 'xyz', 'other_param': 'other_value'}
+
         """
 
         return self._package_properties(
             ['aws_access_key_id', 'aws_secret_access_key', 'aws_session_token', 'region_name'], safe)
 
-    def for_client(self, safe: bool = True):
+    def for_client(self, safe: bool = True) -> dict:
         """
         Extract parameters for a client constructor from a URI string.
+
+        :param safe: If true, only return standard AWS properties that can be passed to. If false, returns all
+
+        >>> ps = b3u('s3://abc:xyz@bucket/object.data?region_name=us-east-1').for_client()
+        >>> for (k, v) in sorted(ps.items()):
+        ...     print(k, v)
+        aws_access_key_id abc
+        aws_secret_access_key xyz
+        region_name us-east-1
+        service_name s3
+        
+        >>> ps = b3u('s3://abc:xyz@bucket/object.data?other_param=other_value').for_client(False)
+        >>> for (k, v) in sorted(ps.items()):
+        ...     print(k, v)
+        aws_access_key_id abc
+        aws_secret_access_key xyz
+        other_param other_value
+        service_name s3
+
         """
 
         return self._package_properties(
             ['service_name', 'region_name', 'api_version', 'endpoint_url', 'verify', 'aws_access_key_id',
              'aws_secret_access_key', 'aws_session_token', 'config'], safe)
 
-    def for_resource(self, safe: bool = True):
+    def for_resource(self, safe: bool = True) -> dict:
         """
         Extract parameters for a resource constructor from a URI string.
         This function is a synonym for the :obj:`for_client` function.
+
+        :param safe: If true, only return standard AWS properties that can be passed to. If false, returns all
+
+        >>> ps = b3u('s3://abc:xyz@bucket/object.data?region_name=us-east-1').for_resource()
+        >>> for (k, v) in sorted(ps.items()):
+        ...     print(k, v)
+        aws_access_key_id abc
+        aws_secret_access_key xyz
+        region_name us-east-1
+        service_name s3
         """
 
         return self.for_client(safe)
@@ -169,6 +208,12 @@ class b3u:
         """
         Extract resource names from a URI for supported AWS services.
         Currently, only S3 and SSM are supported.
+
+        >>> b3u('s3://abc:xyz@bucket/object.data').for_get()
+        {'bucket': 'bucket', 'key': 'object.data'}
+
+        >>> b3u('ssm://ABC:XYZ@/path/to/parameter?region_name=us-east-1').for_get()
+        {'name': '/path/to/parameter'}
         """
         if self.service_name == 's3':
             return self._package_properties(['bucket', 'key'])
@@ -180,18 +225,38 @@ class b3u:
     def cred(self) -> dict:
         """
         Concise synonym for the :obj:`credentials` function.
+
+        >>> cs = b3u('s3://abc:xyz:123@bucket/object.data').cred()
+        >>> for (k, v) in sorted(cs.items()):
+        ...     print(k, v)
+        aws_access_key_id abc
+        aws_secret_access_key xyz
+        aws_session_token 123
+
         """
         return self.credentials()
 
     def conf(self, safe: bool = True) -> dict:
         """
         Concise synonym for the :obj:`_configuration` function.
+
+        >>> b3u('s3://abc:xyz@bucket/object.data').conf()
+        {'aws_access_key_id': 'abc', 'aws_secret_access_key': 'xyz'}
+
         """
         return self.configuration(safe)
 
     def to_string(self) -> str:
         """
         Constructs a uri based off of whatever the current properties of this object are
+
+        >>> b3u('s3://abc:xyz@bucket/object.data?region_name=us-east-1').to_string()
+        's3://abc:xyz@bucket/object.data?region_name=us-east-1'
+
+        >>> b = b3u('s3://abc:xyz@bucket/object.data?region_name=us-east-1')
+        >>> b.aws_access_key_id = 'LMN'
+        >>> b.to_string()
+        's3://LMN:xyz@bucket/object.data?region_name=us-east-1'
         """
 
         new_uri = ''
@@ -245,3 +310,6 @@ class b3u:
             new_uri += key + '=' + parameters[key]
 
         return new_uri
+
+if __name__ == "__main__":
+    doctest.testmod() # pragma: no cover

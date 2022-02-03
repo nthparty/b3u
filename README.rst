@@ -79,6 +79,10 @@ All unit tests are executed and their coverage is measured when using `pytest <h
     python -m pip install pytest
     python -m pytest --cov=b3u --cov-report term-missing
 
+Alternatively, all unit tests are included in the module itself and can be executed using doctest:
+
+    python b3u/b3u.py -v
+
 Style conventions are enforced using `Flake8 <https://flake8.pycqa.org/en/latest/>`_::
 
     python -m pip install flake8
