@@ -67,6 +67,7 @@ Documentation
 
 The documentation can be generated automatically from the source files using `Sphinx <https://www.sphinx-doc.org/>`_::
 
+    python -m pip install -e .
     cd docs
     python -m pip install -r requirements.txt
     sphinx-apidoc -f -E --templatedir=_templates -o _source .. && make html
@@ -76,12 +77,12 @@ Testing and Conventions
 All unit tests are executed and their coverage is measured when using `pytest <https://docs.pytest.org/en/6.2.x/contents.html>`_ (see ``setup.cfg`` for configuration details)::
 
     python -m pip install pytest
-    python -m pytest
+    python -m pytest --cov=b3u --cov-report term-missing
 
-Style conventions are enforced using `Pylint <https://www.pylint.org/>`_::
+Style conventions are enforced using `Flake8 <https://flake8.pycqa.org/en/latest/>`_::
 
-    python -m pip install pylint
-    pylint src/b3u
+    python -m pip install flake8
+    flake8 src/b3u
 
 Contributions
 -------------

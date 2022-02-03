@@ -87,6 +87,9 @@ def test_for_get():
     test_object = b3u('ssm://ABC:XYZ@/path/to/parameter?region_name=us-east-1')
     assert test_object.for_get() == {'name': '/path/to/parameter'}
 
+    test_object = b3u('foo://abc:xyz@bucket/object.data')
+    assert test_object.for_get() == {}
+
 
 def test_to_string():
     """
@@ -102,3 +105,22 @@ def test_to_string():
     test_object.bucket = "new_bucket"
 
     assert test_object.to_string() == 's3://LMN:xyz@new_bucket/object.data?region_name=us-east-2&other_param=other_value'
+
+    test_object = b3u('s3://:b@bucket/object.data?region_name=us-east-1&other_param=other_value')
+    assert test_object.to_string() == 's3://:b@bucket/object.data?region_name=us-east-1&other_param=other_value'
+
+    test_object = b3u('s3://::b@bucket/object.data')
+    assert test_object.to_string() == 's3://::b@bucket/object.data'
+
+    test_object = b3u('s3://a::b@bucket/object.data')
+    assert test_object.to_string() == 's3://a::b@bucket/object.data'
+
+    test_object = b3u('s3://a::b@bucket/object.data')
+    assert test_object.to_string() == 's3://a::b@bucket/object.data'
+
+    test_object = b3u('s3://bucket/object.data')
+    assert test_object.to_string() == 's3://bucket/object.data'
+
+    test_object = b3u('ssm://ABC:XYZ@/path/to/parameter?region_name=us-east-1')
+    test_object.name = '/path/to/parameter2'
+    assert test_object.to_string() == 'ssm://ABC:XYZ@/path/to/parameter2?region_name=us-east-1'

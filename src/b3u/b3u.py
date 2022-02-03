@@ -39,7 +39,11 @@ class b3u:
                 self.aws_session_token = None
             else:
                 (secret, token) = result.password.split(':')
-                self.aws_secret_access_key = unquote(secret)
+                # Secret key not provided, but token is: 'abc::token@...'
+                if secret == '':
+                    self.aws_secret_access_key = None
+                else:
+                    self.aws_secret_access_key = unquote(secret)
                 self.aws_session_token = token
         else:
             self.aws_secret_access_key = None
@@ -89,9 +93,27 @@ class b3u:
 
         return result
 
-    def credentials(self):
+    def credentials(self) -> dict:
         """
         Extract configuration data (only credentials) from a URI string.
+
+        >>> b3u('s3://abc:xyz@bucket/object.data').credentials()
+        {'aws_access_key_id': 'abc', 'aws_secret_access_key': 'xyz'}
+
+        The format ``abc:xyz:123`` can be used to specify a session
+        token (which is the third component, ``123``, in this example)
+        as part of a URI.
+        >>> cs = b3u('s3://abc:xyz:123@bucket/object.data').credentials()
+        >>> for (k, v) in sorted(cs.items()):
+        ...     print(k, v)
+        aws_access_key_id abc
+        aws_secret_access_key xyz
+        aws_session_token 123
+
+        If the aws_secret_access_key contains a slash, it should not be escaped or URL encoded.
+
+        :return: A dictionary with the following keys (if available):
+            aws_access_key_id, aws_secret_access_key, aws_session_token
         """
 
         return self._package_properties(['aws_access_key_id', 'aws_secret_access_key', 'aws_session_token'])
@@ -100,6 +122,7 @@ class b3u:
         """
         Extract configuration data (both credentials and non-credentials)
         from a URI string.
+        :param safe: If true, only return standard AWS properties that can be passed to. If false, returns all
         """
 
         return self._package_properties(
@@ -128,7 +151,7 @@ class b3u:
         with ``urlparse``.
 
         :param uri: AWS resource URI
-        :return: URL parsed URI with slahes in ``aws_secret_access_key`` encoded
+        :return: URL parsed URI with slashes in ``aws_secret_access_key`` encoded
         """
         parts = uri.split(':')
         if len(parts) >= 3:
@@ -171,44 +194,38 @@ class b3u:
         Constructs a uri based off of whatever the current properties of this object are
         """
 
-        new_uri = ""
+        new_uri = ''
 
         if self.service_name is not None:
-            new_uri += self.service_name + "://"
+            new_uri += self.service_name + '://'
 
         contains_aws_info = False
 
         if self.aws_access_key_id is not None:
             new_uri += self.aws_access_key_id
-
             contains_aws_info = True
 
         if self.aws_secret_access_key is not None:
-            if contains_aws_info:
-                new_uri += ":"
-            else:
-                contains_aws_info = True
-
-            new_uri += self.aws_secret_access_key
+            contains_aws_info = True
+            new_uri += ':' + self.aws_secret_access_key
 
         if self.aws_session_token is not None:
-            if contains_aws_info:
-                new_uri += ":"
-            else:
-                contains_aws_info = True
+            contains_aws_info = True
+            if self.aws_secret_access_key is None:
+                new_uri += ':'
 
-            new_uri += self.aws_session_token
+            new_uri += ':' + self.aws_session_token
 
         # Only include the @ if there was aws info included
         if contains_aws_info:
-            new_uri += "@"
+            new_uri += '@'
 
         if self.bucket is not None:
             new_uri += self.bucket
 
             # bucket must exist for key to exist
             if self.key is not None:
-                new_uri += "/" + self.key
+                new_uri += '/' + self.key
 
         elif self.name is not None:
             new_uri += self.name
@@ -220,11 +237,11 @@ class b3u:
         first_param = True
         for key in parameters:
             if first_param:
-                new_uri += "?"
+                new_uri += '?'
                 first_param = False
             else:
-                new_uri += "&"
+                new_uri += '&'
 
-            new_uri += key + "=" + parameters[key]
+            new_uri += key + '=' + parameters[key]
 
         return new_uri

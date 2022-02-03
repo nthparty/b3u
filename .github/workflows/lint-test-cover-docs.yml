@@ -32,7 +32,7 @@ jobs:
         run: |
           pipenv install --dev
           pipenv run flake8 # Check against linting rules.
-          pipenv run pytest --cov=b3u # Test using pytest.
+          pipenv run pytest --cov=b3u --cov-report term-missing # Test using pytest.
 
       - name: Publish coverage results.
         run: |
