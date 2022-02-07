@@ -98,7 +98,7 @@ Alternatively, all unit tests are included in the module itself and can be execu
 
 Style conventions are enforced using `Flake8 <https://flake8.pycqa.org/en/latest/>`_::
 
-    pipenv run python -m flake8 src/b3u
+    pipenv run python -m flake8 src/ tests/
 
 Contributions
 -------------
