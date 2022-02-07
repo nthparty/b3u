@@ -151,7 +151,7 @@ class b3u:
         aws_secret_access_key xyz
         region_name us-east-1
         service_name s3
-        
+
         >>> ps = b3u('s3://abc:xyz@bucket/object.data?other_param=other_value').for_client(False)
         >>> for (k, v) in sorted(ps.items()):
         ...     print(k, v)
@@ -311,5 +311,6 @@ class b3u:
 
         return new_uri
 
+
 if __name__ == "__main__":
-    doctest.testmod() # pragma: no cover
+    doctest.testmod()  # pragma: no cover
