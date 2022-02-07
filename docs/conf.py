@@ -1,3 +1,5 @@
+from b3u import __version__
+
 # Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full
@@ -12,21 +14,17 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))
 
+sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
-# The name and version are retrieved from `setup.py` in the root directory.
-with open('../setup.py') as package_file:
-    package = package_file.read()
-project = package.split('name = "')[1].split('"')[0]
-version = package.split('version = "')[1].split('"')[0]
+project = 'b3u'
+version = __version__
 release = version
 
 author = 'Nth Party, Ltd.'
-copyright = '2021, Nth Party, Ltd' # Period omitted; precedes punctuation.
-
+copyright = '2022, Nth Party, Ltd'  # Period omitted; precedes punctuation.
 
 # -- General configuration ---------------------------------------------------
 
@@ -60,7 +58,6 @@ autodoc_default_options = {
     ])
 }
 autodoc_preserve_defaults = True
-
 
 # -- Options for HTML output -------------------------------------------------
 
