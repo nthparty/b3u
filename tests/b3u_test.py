@@ -51,7 +51,8 @@ def test_configuration():
     test_object.region_name = 'us-east-2'
     test_object.other_param = 'new_value'
     assert test_object.conf(False) == {'aws_access_key_id': 'abc', 'aws_secret_access_key': '123',
-                                       'aws_session_token': '456', 'region_name': 'us-east-2', 'other_param': 'new_value'}
+                                       'aws_session_token': '456', 'region_name': 'us-east-2',
+                                       'other_param': 'new_value'}
 
 
 def test_for_client():
