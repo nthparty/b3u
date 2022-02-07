@@ -61,6 +61,20 @@ The example below creates an SSM client given a URI that contains no credentials
     >>> b = b3u("ssm:///path/to/parameter?region_name=us-east-1")
     >>> boto3.client('ssm', **b.conf())
 
+Developer Notes
+---------------
+
+Pipenv is used for dependency management of the main library, minus Read the Docs which does not support Pipenv.
+You can install all dependencies with::
+
+    pipenv install --dev
+
+To release a new version of the library, run::
+
+    pipenv run python -m pip install --upgrade build twine
+    pipenv run python -m build
+    twine upload dist/*
+
 Documentation
 -------------
 .. include:: toc.rst
@@ -76,17 +90,15 @@ Testing and Conventions
 -----------------------
 All unit tests are executed and their coverage is measured when using `pytest <https://docs.pytest.org/en/6.2.x/contents.html>`_ (see ``setup.cfg`` for configuration details)::
 
-    python -m pip install pytest
-    python -m pytest --cov=b3u --cov-report term-missing
+    pipenv run python -m pytest --cov=b3u --cov-report term-missing
 
 Alternatively, all unit tests are included in the module itself and can be executed using doctest:
 
-    python b3u/b3u.py -v
+    pipenv run python src/b3u/b3u.py -v
 
 Style conventions are enforced using `Flake8 <https://flake8.pycqa.org/en/latest/>`_::
 
-    python -m pip install flake8
-    flake8 src/b3u
+    pipenv run python -m flake8 src/b3u
 
 Contributions
 -------------

@@ -134,7 +134,8 @@ class b3u:
         Extract configuration data (both credentials and non-credentials)
         from a URI string.
 
-        :param safe: If true, only return standard AWS properties that can be passed to. If false, returns all
+        :param safe: If true, only return standard AWS properties that can be passed to.
+            If false, returns all.
 
         >>> b3u('s3://abc:xyz@bucket/object.data?other_param=other_value').configuration()
         {'aws_access_key_id': 'abc', 'aws_secret_access_key': 'xyz'}
@@ -151,7 +152,8 @@ class b3u:
         """
         Extract parameters for a client constructor from a URI string.
 
-        :param safe: If true, only return standard AWS properties that can be passed to. If false, returns all
+        :param safe: If true, only return standard AWS properties that can be passed to.
+            If false, return all.
 
         >>> ps = b3u('s3://abc:xyz@bucket/object.data?region_name=us-east-1').for_client()
         >>> for (k, v) in sorted(ps.items()):
