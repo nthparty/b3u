@@ -68,16 +68,25 @@ class b3u:
         self.config = params.pop('config', None)
 
         # Only values left in params should be custom user values
-        self.custom_values = params
+        self.custom_values = params.keys()
 
         # Extract remaining properties (custom values given by user)
         # so that they can be accessed by foo.<custom_parameter_name>
-        self._extract_custom_properties(self.custom_values)
+        self._extract_custom_properties(params)
 
     # Extract all custom values into properties
     def _extract_custom_properties(self, params: dict):
         for key in params.keys():
             setattr(self, key, params[key])
+
+    # Get current values of all originally entered custom values
+    def _get_custom_values(self):
+        r = {}
+
+        for custom_key in self.custom_values:
+            r[custom_key] = getattr(self, custom_key)
+
+        return r
 
     # Given a list of property names, creates a dictionary with structure property_name: value if value is not None
     # If safe is false, includes all custom values as well
@@ -90,7 +99,7 @@ class b3u:
                 result[key_val] = att_val
 
         if not safe:
-            result.update(self.custom_values)
+            result.update(self._get_custom_values())
 
         return result
 

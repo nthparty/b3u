@@ -45,12 +45,13 @@ def test_configuration():
     assert test_object.conf(False) == {'other_param': 'other:value'}
 
     # Check that configuration can handle edited values
-    test_object = b3u('s3://abc:xyz@bucket/object.data?region_name=us-east-1')
+    test_object = b3u('s3://abc:xyz@bucket/object.data?region_name=us-east-1&other_param=other_value')
     test_object.aws_secret_access_key = '123'
     test_object.aws_session_token = '456'
     test_object.region_name = 'us-east-2'
-    assert test_object.conf() == {'aws_access_key_id': 'abc', 'aws_secret_access_key': '123',
-                                  'aws_session_token': '456', 'region_name': 'us-east-2'}
+    test_object.other_param = 'new_value'
+    assert test_object.conf(False) == {'aws_access_key_id': 'abc', 'aws_secret_access_key': '123',
+                                  'aws_session_token': '456', 'region_name': 'us-east-2', 'other_param': 'new_value'}
 
 
 def test_for_client():
@@ -100,11 +101,12 @@ def test_to_string():
     test_obj = b3u('s3://abc:xyz@bucket/object.data?region_name=us-east-1&other_param=other_value')
     assert test_obj.to_string() == 's3://abc:xyz@bucket/object.data?region_name=us-east-1&other_param=other_value'
 
-    test_obj.region_name = "us-east-2"
-    test_obj.aws_access_key_id = "LMN"
-    test_obj.bucket = "new_bucket"
+    test_obj.region_name = 'us-east-2'
+    test_obj.aws_access_key_id = 'LMN'
+    test_obj.bucket = 'new_bucket'
+    test_obj.other_param = 'new_value'
 
-    assert test_obj.to_string() == 's3://LMN:xyz@new_bucket/object.data?region_name=us-east-2&other_param=other_value'
+    assert test_obj.to_string() == 's3://LMN:xyz@new_bucket/object.data?region_name=us-east-2&other_param=new_value'
 
     test_object = b3u('s3://:b@bucket/object.data?region_name=us-east-1&other_param=other_value')
     assert test_object.to_string() == 's3://:b@bucket/object.data?region_name=us-east-1&other_param=other_value'
