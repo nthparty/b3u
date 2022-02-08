@@ -84,10 +84,10 @@ def test_for_resource():
 
 def test_for_get():
     test_object = b3u('s3://abc:xyz@bucket/object.data')
-    assert test_object.for_get() == {'bucket': 'bucket', 'key': 'object.data'}
+    assert test_object.for_get() == {'Bucket': 'bucket', 'Key': 'object.data'}
 
     test_object = b3u('ssm://ABC:XYZ@/path/to/parameter?region_name=us-east-1')
-    assert test_object.for_get() == {'name': '/path/to/parameter'}
+    assert test_object.for_get() == {'Name': '/path/to/parameter'}
 
     test_object = b3u('foo://abc:xyz@bucket/object.data')
     assert test_object.for_get() == {}
@@ -104,7 +104,7 @@ def test_to_string():
 
     test_obj.region_name = 'us-east-2'
     test_obj.aws_access_key_id = 'LMN'
-    test_obj.bucket = 'new_bucket'
+    test_obj.Bucket = 'new_bucket'
     test_obj.other_param = 'new_value'
 
     assert test_obj.to_string() == 's3://LMN:xyz@new_bucket/object.data?region_name=us-east-2&other_param=new_value'
@@ -126,5 +126,5 @@ def test_to_string():
 
     test_object = b3u('ssm://ABC:XYZ@/path/to/parameter?region_name=us-east-1')
     assert test_object.to_string() == 'ssm://ABC:XYZ@/path/to/parameter?region_name=us-east-1'
-    test_object.name = '/path/to/parameter2'
+    test_object.Name = '/path/to/parameter2'
     assert test_object.to_string() == 'ssm://ABC:XYZ@/path/to/parameter2?region_name=us-east-1'

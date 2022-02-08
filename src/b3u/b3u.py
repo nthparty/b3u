@@ -13,18 +13,18 @@ class b3u:
 
         result = self._make_url_safe(uri)
 
-        self.bucket = None
-        self.key = None
-        self.name = None
+        self.Bucket = None
+        self.Key = None
+        self.Name = None
 
         if result.scheme == 's3':
             if result.hostname is not None and result.hostname != '':
-                self.bucket = result.hostname
+                self.Bucket = result.hostname
             if result.path is not None and result.path != '':
-                self.key = result.path.lstrip('/')
+                self.Key = result.path.lstrip('/')
         elif result.scheme == 'ssm':
             if result.path is not None and result.path != '':
-                self.name = result.path
+                self.Name = result.path
 
         params = {}
         result = self._make_url_safe(uri)
@@ -221,15 +221,15 @@ class b3u:
         Currently, only S3 and SSM are supported.
 
         >>> b3u('s3://abc:xyz@bucket/object.data').for_get()
-        {'bucket': 'bucket', 'key': 'object.data'}
+        {'Bucket': 'bucket', 'Key': 'object.data'}
 
         >>> b3u('ssm://ABC:XYZ@/path/to/parameter?region_name=us-east-1').for_get()
-        {'name': '/path/to/parameter'}
+        {'Name': '/path/to/parameter'}
         """
         if self.service_name == 's3':
-            return self._package_properties(['bucket', 'key'])
+            return self._package_properties(['Bucket', 'Key'])
         elif self.service_name == 'ssm':
-            return self._package_properties(['name'])
+            return self._package_properties(['Name'])
 
         return {}
 
@@ -296,15 +296,15 @@ class b3u:
         if contains_aws_info:
             new_uri += '@'
 
-        if self.bucket is not None:
-            new_uri += self.bucket
+        if self.Bucket is not None:
+            new_uri += self.Bucket
 
             # bucket must exist for key to exist
-            if self.key is not None:
-                new_uri += '/' + self.key
+            if self.Key is not None:
+                new_uri += '/' + self.Key
 
-        elif self.name is not None:
-            new_uri += self.name
+        elif self.Name is not None:
+            new_uri += self.Name
 
         # Add in all parameters including custom values
         parameters = self._package_properties(
