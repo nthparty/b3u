@@ -73,11 +73,10 @@ To release a new version of the library, run::
 
     pipenv run python -m pip install --upgrade build twine
     pipenv run python -m build
-    twine upload dist/*
+    pipenv run twine upload dist/*
 
 Documentation
 -------------
-.. include:: toc.rst
 
 The documentation can be generated automatically from the source files using `Sphinx <https://www.sphinx-doc.org/>`_::
 
