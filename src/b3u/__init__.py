@@ -1,3 +1,4 @@
+""" Import main module directly """
 from .b3u import b3u
 
 __version__ = '2.0.0'

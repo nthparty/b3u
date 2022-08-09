@@ -1,6 +1,49 @@
+[project]
+name = "b3u"
+version = "2.0.0"
+description = """\
+    Boto3 URI utility library that supports extraction of Boto3 configuration \
+    data and method parameters from AWS resource URIs. \
+    """
+license = {text = "MIT"}
+authors = [
+    {name = "Andrei Lapets"},
+    {email = "a@lapets.io"}
+]
+readme = "README.rst"
+requires-python = ">=3.7"
+
+[project.urls]
+Repository = "https://github.com/nthparty/b3u"
+Documentation = "https://b3u.readthedocs.io"
+
+[project.optional-dependencies]
+docs = [
+    "toml~=0.10.2",
+    "sphinx~=4.2.0",
+    "sphinx-rtd-theme~=1.0.0",
+    "sphinx-autodoc-typehints~=1.12.0"
+]
+test = [
+    "pytest~=7.0",
+    "pytest-cov~=3.0"
+]
+lint = [
+    "pylint~=2.14.0"
+]
+coveralls = [
+    "coveralls~=3.3.1"
+]
+publish = [
+    "build~=0.8",
+    "twine~=4.0"
+]
+
 [build-system]
 requires = [
-    "setuptools>=46.4.0",
-    "wheel"
+    "setuptools~=62.0"
 ]
 build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+addopts = "--doctest-modules --ignore=docs --cov=b3u --cov-report term-missing"

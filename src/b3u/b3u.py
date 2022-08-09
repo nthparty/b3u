@@ -8,6 +8,9 @@ from urllib.parse import urlparse, parse_qs, quote, unquote, ParseResult
 
 
 class b3u:
+    """
+    Top level URI formatting & extraction class
+    """
 
     def __init__(self, uri: str):
 
@@ -228,7 +231,7 @@ class b3u:
         """
         if self.service_name == 's3':
             return self._package_properties(['Bucket', 'Key'])
-        elif self.service_name == 'ssm':
+        if self.service_name == 'ssm':
             return self._package_properties(['Name'])
 
         return {}
